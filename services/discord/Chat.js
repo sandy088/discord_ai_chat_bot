@@ -49,7 +49,7 @@ exports.imageReply = async (message) => {
 
             const data = {
                 imageURL: message.attachments.first().url,
-                token: "sandyv3456"
+                token: process.env.IMG_TO_TXT_TOKEN
             }
             
             const isImage = isImageUrl(data.imageURL)
@@ -62,7 +62,7 @@ exports.imageReply = async (message) => {
             }
 
             let resData = ''
-            await axios.post('https://coral-app-w7sdy.ondigitalocean.app/api/image/recognize', data).then((res) => {
+            await axios.post('http://localhost:4000/api/image/recognize', data).then((res) => {
                 
                 resData = res.data.text
 
