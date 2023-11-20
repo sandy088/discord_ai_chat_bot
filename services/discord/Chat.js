@@ -4,6 +4,8 @@ const { main, replyForImage } = require('../ai_chat_response');
 const fs = require('fs');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { downloadImage } = require('../Images/DownloadImages');
+const { isImageUrl } = require('../Images/checkImage');
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageTyping] });
 
 
@@ -50,6 +52,15 @@ exports.imageReply = async (message) => {
                 token: "sandyv3456"
             }
             
+            const isImage = isImageUrl(data.imageURL)
+            console.log("Is this is an Image? ",isImage)
+
+            if(!isImage){
+                message.channel.sendTyping();
+                message.reply("Please send a valid image url as of now I can only read jpg and png images");
+                return;
+            }
+
             let resData = ''
             await axios.post('https://coral-app-w7sdy.ondigitalocean.app/api/image/recognize', data).then((res) => {
                 
