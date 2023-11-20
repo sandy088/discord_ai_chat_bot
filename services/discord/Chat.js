@@ -62,7 +62,7 @@ exports.imageReply = async (message) => {
             }
 
             let resData = ''
-            await axios.post('http://localhost:4000/api/image/recognize', data).then((res) => {
+            await axios.post(`${process.env.IMG_TO_TXT_URL}/api/image/recognize`, data).then((res) => {
                 
                 resData = res.data.text
 
