@@ -49,7 +49,6 @@ exports.imageReply = async (message) => {
 
             const data = {
                 imageURL: message.attachments.first().url,
-                token: process.env.IMG_TO_TXT_TOKEN
             }
             
             const isImage = isImageUrl(data.imageURL)
@@ -62,36 +61,35 @@ exports.imageReply = async (message) => {
             }
 
             let resData = ''
-            await axios.post(`${process.env.IMG_TO_TXT_URL}/api/image/recognize`, data).then((res) => {
-                
-                resData = res.data.text
+            await axios.post(`${process.env.IMG_TO_TXT_URL}/api/image/recognize`, data, {
+                headers: {
+                    authorization: process.env.IMG_TO_TXT_TOKEN
+                }
+            }).then((res) => {
+                resData = res.data.text;
 
-                    ; (async () => {
-                        if (message.content !="") {
-
-                            message.channel.sendTyping()
-                            const replyText = await replyForImage(message.content, resData)
-                            if (replyText.length < 2000) {
-                                message.reply(replyText);
-                            } else {
-                                message.reply("Sorry, I can't send messages longer than 2000 characters");
-                            }
+                ;(async () => {
+                    if (message.content != "") {
+                        message.channel.sendTyping();
+                        const replyText = await replyForImage(message.content, resData);
+                        if (replyText.length < 2000) {
+                            message.reply(replyText);
                         } else {
-                           
-                            message.channel.sendTyping()
-                            const replyText = await replyForImage(imageData = resData)
-                            if (replyText.length < 2000) {
-                                message.reply(replyText);
-                            } else {
-                                message.reply("Sorry, I can't send messages longer than 2000 characters");
-                            }
+                            message.reply("Sorry, I can't send messages longer than 2000 characters");
                         }
-                    })()
+                    } else {
+                        message.channel.sendTyping();
+                        const replyText = await replyForImage(imageData = resData);
+                        if (replyText.length < 2000) {
+                            message.reply(replyText);
+                        } else {
+                            message.reply("Sorry, I can't send messages longer than 2000 characters");
+                        }
+                    }
+                })()
             }).catch((err) => {
-                console.log(err)
-            }
-
-            );
+                console.log(err);
+            });
 
             // console.log('Image read successfully:', apiResponse);
         } catch (error) {
